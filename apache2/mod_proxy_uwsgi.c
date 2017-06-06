@@ -151,14 +151,9 @@ static int uwsgi_send_headers(request_rec *r, proxy_conn_rec *conn)
     const char *path_info = apr_table_get(r->subprocess_env, "PATH_INFO");
 
     if (script_name && path_info) {
-        if (strcmp(path_info, "/")) {
+        if (strcmp(path_info, "/") || (script_name[strlen(script_name) - 1] == '/')) {
             apr_table_set(r->subprocess_env, "SCRIPT_NAME", apr_pstrndup(r->pool, script_name, strlen(script_name)-strlen(path_info)));
 	}
-        else {
-            if (!strcmp(script_name, "/")) {
-                apr_table_set(r->subprocess_env, "SCRIPT_NAME", "");
-            }
-        }
     }
 
     env_table = apr_table_elts(r->subprocess_env);
